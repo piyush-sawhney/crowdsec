@@ -1,3 +1,10 @@
+# SSH auth log acquisition
+# NOTE: On systems using systemd/journald, /var/log/auth.log may not be written
+# by default. Verify with: tail -f /var/log/auth.log
+# If empty, enable persistent logging in /etc/systemd/journald.conf:
+#   Storage=persistent
+# Or add a journald acquisition source alongside this one.
+name: ssh-auth-log
 filenames:
   - /var/log/auth.log
 labels:

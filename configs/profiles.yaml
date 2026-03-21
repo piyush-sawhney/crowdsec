@@ -1,9 +1,29 @@
-# Aggressive scenarios — 1 week ban
-name: aggressive_scenario_remediation
+# =============================================================================
+# CrowdSec Remediation Profiles — Three-tier ban strategy
+# =============================================================================
+# Tier 1 — CRITICAL (7 days): Active exploits, brute-force, CVEs, AppSec hits
+# Tier 2 — AGGRESSIVE (48 hours): Scanners, bad actors, crawlers
+# Tier 3 — DEFAULT (24 hours): Everything else that warrants remediation
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# TIER 1 — Critical: 7-day ban
+# Covers direct attack behavior: brute force, known CVE exploitation,
+# AppSec rule triggers, and virtual patching hits.
+# -----------------------------------------------------------------------------
+name: critical_remediation
 filters:
   - Alert.Remediation == true
   - Alert.GetScope() == "Ip"
-  - Alert.GetScenario() in ["crowdsecurity/ssh-bf", "crowdsecurity/ssh-slow-bf", "crowdsecurity/http-crawl-non-stealthy-scan", "crowdsecurity/http-bad-user-agent", "crowdsecurity/ssh-cve-2024-6387"]
+  - |
+    Alert.GetScenario() in [
+      "crowdsecurity/ssh-bf",
+      "crowdsecurity/ssh-slow-bf",
+      "crowdsecurity/ssh-cve-2024-6387",
+      "crowdsecurity/http-cve",
+      "crowdsecurity/appsec-virtual-patching",
+      "crowdsecurity/appsec-generic-rules"
+    ]
 decisions:
   - type: ban
     duration: 168h
@@ -11,11 +31,38 @@ notifications:
   - http_default
 on_success: break
 
----
-# All other scenarios — 24h ban
+# -----------------------------------------------------------------------------
+# TIER 2 — Aggressive: 48-hour ban
+# Covers scanners, crawlers, and persistent bad user-agent behavior.
+# These are hostile but not necessarily active exploit attempts.
+# -----------------------------------------------------------------------------
+name: aggressive_remediation
+filters:
+  - Alert.Remediation == true
+  - Alert.GetScope() == "Ip"
+  - |
+    Alert.GetScenario() in [
+      "crowdsecurity/http-crawl-non-stealthy-scan",
+      "crowdsecurity/http-bad-user-agent",
+      "crowdsecurity/http-probing",
+      "crowdsecurity/http-path-traversal-probing",
+      "crowdsecurity/http-backdoors-attempts"
+    ]
+decisions:
+  - type: ban
+    duration: 48h
+notifications:
+  - http_default
+on_success: break
+
+# -----------------------------------------------------------------------------
+# TIER 3 — Default: 24-hour ban
+# Catch-all for any remaining remediation-eligible alerts not matched above.
+# -----------------------------------------------------------------------------
 name: default_ip_remediation
 filters:
-  - Alert.Remediation == true && Alert.GetScope() == "Ip"
+  - Alert.Remediation == true
+  - Alert.GetScope() == "Ip"
 decisions:
   - type: ban
     duration: 24h

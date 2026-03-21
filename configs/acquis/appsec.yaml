@@ -1,5 +1,10 @@
+# AppSec engine acquisition
+# Traefik reaches this via the shared traefik-public network using:
+#   http://crowdsec:7422
+# No host port mapping is needed or desired.
+name: appsec-engine
 appsec_config: crowdsecurity/appsec-default
-listen_addr: 0.0.0.0:7422
+listen_addr: 0.0.0.0:7422   # 0.0.0.0 is fine — Docker network isolation applies
 source: appsec
 labels:
   type: appsec

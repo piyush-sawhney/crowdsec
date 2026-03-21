@@ -1,3 +1,7 @@
+# Traefik access log acquisition
+# Ensure Traefik is configured to write access logs to this directory.
+# In traefik's static config: accessLog: filePath: "/var/log/traefik/access.log"
+name: traefik-logs
 filenames:
   - /var/log/traefik/*.log
 labels:
