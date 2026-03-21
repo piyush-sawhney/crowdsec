@@ -8,7 +8,7 @@ decisions:
   - type: ban
     duration: 168h
 notifications:
-  - telegram_default
+  - http_default
 on_success: break
 
 ---

@@ -30,7 +30,8 @@ services:
       - ./configs/acquis/ssh.yaml:/etc/crowdsec/acquis.d/ssh.yaml:ro
       # Profiles and notifications
       - ./configs/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
-      - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/telegram.yaml:ro
+      # crowdsec-compose.yaml
+      - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
       # Persistent state
       - crowdsec-db:/var/lib/crowdsec/data/
       - crowdsec-config:/etc/crowdsec/
