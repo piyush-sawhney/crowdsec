@@ -28,9 +28,7 @@ services:
       # Profiles and notifications
       - ./configs/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
       - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
-      - ./data/config/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml
-      - ./data/config/local_api_credentials.yaml:/etc/crowdsec/local_api_credentials.yaml
-      # Persistent state — db only, no full /etc/crowdsec mount
+      # Persistent state
       - ./data/db:/var/lib/crowdsec/data/
       # Log sources
       - ${TRAEFIK_LOGS_PATH}:/var/log/traefik:ro
