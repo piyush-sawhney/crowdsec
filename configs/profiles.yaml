@@ -1,0 +1,22 @@
+
+name: repeat_offender
+filters:
+  - Alert.Remediation == true
+  - Alert.GetScope() == "Ip"
+  - Alert.GetDecisionsCount("ban") >= 3
+decisions:
+  - type: ban
+    duration: 168h
+notifications:
+  - telegram_default
+on_success: break
+
+---
+# Everyone else gets a 24h ban (default is only 4h)
+name: default_ip_remediation
+filters:
+  - Alert.Remediation == true && Alert.GetScope() == "Ip"
+decisions:
+  - type: ban
+    duration: 24h
+on_success: break
