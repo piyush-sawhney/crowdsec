@@ -21,7 +21,7 @@ services:
       BOUNCER_KEY_traefik: "${CROWDSEC_TRAEFIK_KEY}"
       BOUNCER_KEY_firewall: "${CROWDSEC_FIREWALL_KEY}"
       # Console enrollment — get key from app.crowdsec.net
-      ENROLL_KEY: "${CROWDSEC_ENROLL_KEY:-}"
+      # ENROLL_KEY: "${CROWDSEC_ENROLL_KEY:-}"
       DISABLE_ONLINE_API: "false"
     volumes:
       # Acquisition configs
