@@ -17,11 +17,8 @@ services:
         crowdsecurity/base-http-scenarios
         crowdsecurity/http-cve
         crowdsecurity/whitelist-good-actors
-      # Pre-register bouncer keys on first boot — no manual exec needed
       BOUNCER_KEY_traefik: "${CROWDSEC_TRAEFIK_KEY}"
       BOUNCER_KEY_firewall: "${CROWDSEC_FIREWALL_KEY}"
-      # Console enrollment — get key from app.crowdsec.net
-      # ENROLL_KEY: "${CROWDSEC_ENROLL_KEY:-}"
       DISABLE_ONLINE_API: "false"
     volumes:
       # Acquisition configs
@@ -30,19 +27,15 @@ services:
       - ./configs/acquis/ssh.yaml:/etc/crowdsec/acquis.d/ssh.yaml:ro
       # Profiles and notifications
       - ./configs/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
-      # crowdsec-compose.yaml
       - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
-      # Persistent state
+      - ./data/config/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml
+      - ./data/config/local_api_credentials.yaml:/etc/crowdsec/local_api_credentials.yaml
+      # Persistent state — db only, no full /etc/crowdsec mount
       - ./data/db:/var/lib/crowdsec/data/
-      - ./data/config:/etc/crowdsec/
-      # Traefik logs — same host path as Traefik's bind mount
-      # Host path: /home/<user>/app_server/traefik/logs
+      # Log sources
       - ${TRAEFIK_LOGS_PATH}:/var/log/traefik:ro
-      # SSH auth log
       - /var/log/auth.log:/var/log/auth.log:ro
     ports:
-      # 8081 on host — avoids collision with Traefik metrics (8080)
-      # Only the host firewall bouncer uses this; Traefik uses internal Docker network
       - "127.0.0.1:8081:8080"
     networks:
       - traefik-public

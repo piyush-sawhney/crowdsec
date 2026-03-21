@@ -1,9 +1,9 @@
-
-name: repeat_offender
+# Aggressive scenarios — 1 week ban
+name: aggressive_scenario_remediation
 filters:
   - Alert.Remediation == true
   - Alert.GetScope() == "Ip"
-  - Alert.GetDecisionsCount("ban") >= 3
+  - Alert.GetScenario() in ["crowdsecurity/ssh-bf", "crowdsecurity/ssh-slow-bf", "crowdsecurity/http-crawl-non-stealthy-scan", "crowdsecurity/http-bad-user-agent", "crowdsecurity/ssh-cve-2024-6387"]
 decisions:
   - type: ban
     duration: 168h
@@ -12,11 +12,13 @@ notifications:
 on_success: break
 
 ---
-# Everyone else gets a 24h ban (default is only 4h)
+# All other scenarios — 24h ban
 name: default_ip_remediation
 filters:
   - Alert.Remediation == true && Alert.GetScope() == "Ip"
 decisions:
   - type: ban
     duration: 24h
+notifications:
+  - http_default
 on_success: break
