@@ -40,7 +40,7 @@ services:
       - /var/log/auth.log:/var/log/auth.log:ro
     ports:
       # LAPI — localhost only, never expose publicly
-      - "127.0.0.1:8081:8080"
+      - "8081:8080"
       # AppSec engine — reachable by Traefik via shared network (no host port needed)
       # Port 7422 is intentionally NOT published to the host
     networks:
