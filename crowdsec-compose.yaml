@@ -6,8 +6,6 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      GID: "${CROWDSEC_GID:-1000}"
-      UID: "${CROWDSEC_UID:-1000}"
       # Collections to install on first boot
       COLLECTIONS: >-
         crowdsecurity/linux
@@ -21,9 +19,9 @@ services:
       # Bouncer keys — set these in your .env file, never hardcode
       BOUNCER_KEY_traefik: "${CROWDSEC_TRAEFIK_KEY}"
       BOUNCER_KEY_firewall: "${CROWDSEC_FIREWALL_KEY}"
+      TZ: Asia/Kolkata
       # Share threat intel with CrowdSec central API (requires enrollment)
       # Run: docker exec crowdsec cscli console enroll <your-key>
-      DISABLE_ONLINE_API: "false"
     volumes:
       # Acquisition configs
       - ./configs/acquis/appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml:ro
