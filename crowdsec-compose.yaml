@@ -33,8 +33,8 @@ services:
       # crowdsec-compose.yaml
       - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
       # Persistent state
-      - crowdsec-db:/var/lib/crowdsec/data/
-      - crowdsec-config:/etc/crowdsec/
+      - ./data/db:/var/lib/crowdsec/data/
+      - ./data/config:/etc/crowdsec/
       # Traefik logs — same host path as Traefik's bind mount
       # Host path: /home/<user>/app_server/traefik/logs
       - ${TRAEFIK_LOGS_PATH}:/var/log/traefik:ro
@@ -56,7 +56,3 @@ services:
 networks:
   traefik-public:
     external: true
-
-volumes:
-  crowdsec-db:
-  crowdsec-config:
