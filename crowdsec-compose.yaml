@@ -6,7 +6,6 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      # Collections to install on first boot
       COLLECTIONS: >-
         crowdsecurity/linux
         crowdsecurity/traefik
@@ -16,35 +15,28 @@ services:
         crowdsecurity/base-http-scenarios
         crowdsecurity/http-cve
         crowdsecurity/whitelist-good-actors
-      # Bouncer keys — set these in your .env file, never hardcode
+      # Keep ONLY Traefik since we are removing the host-firewall
       BOUNCER_KEY_traefik: "${CROWDSEC_TRAEFIK_KEY}"
-      BOUNCER_KEY_firewall: "${CROWDSEC_FIREWALL_KEY}"
       TZ: Asia/Kolkata
-      LOCAL_API_URL: "http://0.0.0.0:8080"
-      # Share threat intel with CrowdSec central API (requires enrollment)
-      # Run: docker exec crowdsec cscli console enroll <your-key>
+      # LISTEN_ADDR 0.0.0.0 is required for Docker bridge networking
+      LAPI_LISTEN_ADDR: 0.0.0.0:8080
+      # Use the container's internal address for the local agent
+      LOCAL_API_URL: http://127.0.0.1:8080
     volumes:
-      # Acquisition configs
       - ./configs/acquis/appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml:ro
       - ./configs/acquis/traefik.yaml:/etc/crowdsec/acquis.d/traefik.yaml:ro
       - ./configs/acquis/ssh.yaml:/etc/crowdsec/acquis.d/ssh.yaml:ro
-      # Profiles and notifications
       - ./configs/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
       - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
-      # Persistent state — always use named volumes for these
       - crowdsec-db:/var/lib/crowdsec/data/
       - crowdsec-config:/etc/crowdsec/
-      # Log sources (read-only)
       - traefik-logs:/var/log/traefik:ro
       - /var/log/auth.log:/var/log/auth.log:ro
     ports:
-      # LAPI — localhost only, never expose publicly
-      - "127.0.0.1:8081:8080"
-      # AppSec engine — reachable by Traefik via shared network (no host port needed)
-      # Port 7422 is intentionally NOT published to the host
+      # Removed 127.0.0.1 binding for a moment to verify connectivity
+      - "8081:8080"
     networks:
       - traefik-public
-    # Prevent runaway resource usage during log-parse spikes
     mem_limit: 512m
     cpus: "0.5"
     healthcheck:
@@ -58,7 +50,7 @@ volumes:
   crowdsec-db:
   crowdsec-config:
   traefik-logs:
-    external: true  # Pre-existing volume created by Traefik — do not let Compose manage it
+    external: true
 
 networks:
   traefik-public:
