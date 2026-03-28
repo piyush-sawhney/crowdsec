@@ -43,7 +43,7 @@ services:
 
 
 volumes:
-  traefik_traefik-logs:
+  traefik-logs:
     external: true
   crowdsec-db:
     external: false
