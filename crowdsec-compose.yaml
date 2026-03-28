@@ -2,46 +2,28 @@ services:
   crowdsec:
     image: crowdsecurity/crowdsec:latest
     container_name: crowdsec
-    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
     environment:
       GID: "${GID-1000}"
-      TRUSTED_IPS: 127.0.0.1,172.17.0.1,172.18.0.1
-      COLLECTIONS: >-
-        crowdsecurity/linux
-        crowdsecurity/traefik
-        crowdsecurity/sshd
-        crowdsecurity/appsec-virtual-patching
-        crowdsecurity/appsec-generic-rules
-        crowdsecurity/base-http-scenarios
-        crowdsecurity/http-cve
-        crowdsecurity/whitelist-good-actors
-      TZ: Asia/Kolkata
+      COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/sshd crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules crowdsecurity/base-http-scenarios"
     volumes:
-      - ./configs/acquis/appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml:ro
-      - ./configs/acquis/traefik.yaml:/etc/crowdsec/acquis.d/traefik.yaml:ro
-      - ./configs/acquis/ssh.yaml:/etc/crowdsec/acquis.d/ssh.yaml:ro
-      - ./configs/profiles.yaml:/etc/crowdsec/profiles.yaml:ro
-      - ./configs/notifications/telegram.yaml:/etc/crowdsec/notifications/http.yaml:ro
+      - ./configs/appsec.yaml:/etc/crowdsec/acquis.d/appsec.yaml:ro
+      - ./configs/traefik.yaml:/etc/crowdsec/acquis.d/traefik.yaml:ro
+      - ./configs/ssh.yaml:/etc/crowdsec/acquis.d/ssh.yaml:ro
       - crowdsec-db:/var/lib/crowdsec/data/
       - crowdsec-config:/etc/crowdsec/
-      - traefik-logs:/var/log/traefik:ro
+      - traefik_traefik-logs:/var/log/traefik:ro
       - /var/log/auth.log:/var/log/auth.log:ro
     ports:
-      # Removed 127.0.0.1 binding for a moment to verify connectivity
-      - "8080:8080"
+      - "8080:8080" # CrowdSec API
     networks:
       - traefik-public
-    mem_limit: 512m
-    cpus: "0.5"
-    healthcheck:
-      test: ["CMD", "cscli", "version"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+    restart: unless-stopped
 
+networks:
+  traefik-public:
+    external: true
 
 volumes:
   traefik-logs:
@@ -50,7 +32,3 @@ volumes:
     external: false
   crowdsec-config:
     external: false
-
-networks:
-  traefik-public:
-    external: true
