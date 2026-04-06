@@ -51,6 +51,8 @@ services:
       - /var/log:mode=0755 # This creates a writable base for the log mount points
     cap_drop:
       - ALL
+    cap_add:
+      - NET_BIND_SERVICE  # Allows binding to privileged ports/network initialization
     expose:
       # LAPI — reachable by Traefik and local tools, but not exposed to the public
       - "8080"
