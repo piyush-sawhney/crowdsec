@@ -52,6 +52,7 @@ services:
     cap_drop:
       - ALL
     cap_add:
+      - NET_RAW          # CRITICAL: Allows the container to join the Docker bridge network
       - NET_BIND_SERVICE # Required for LAPI (8080) and AppSec (7422)
       - DAC_OVERRIDE     # Required to read root-owned logs like /var/log/auth.log
     expose:
