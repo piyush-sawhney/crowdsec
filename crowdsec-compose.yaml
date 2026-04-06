@@ -43,10 +43,12 @@ services:
 
       # 4. Logs
       - traefik-logs:/var/log/traefik:ro
-      - /var/log:/var/log:ro
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/syslog:/var/log/syslog:ro
     tmpfs:
       - /tmp
       - /run
+      - /var/log/traefik
     cap_drop:
       - ALL
     expose:
