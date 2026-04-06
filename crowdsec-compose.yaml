@@ -6,6 +6,8 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
+      GID: "${GID-1000}"
+      UID: "${UID-1000}"
       # Collections to install on first boot
       COLLECTIONS: >-
         crowdsecurity/linux
