@@ -52,7 +52,8 @@ services:
     cap_drop:
       - ALL
     cap_add:
-      - NET_BIND_SERVICE  # Allows binding to privileged ports/network initialization
+      - NET_BIND_SERVICE # Required for LAPI (8080) and AppSec (7422)
+      - DAC_OVERRIDE     # Required to read root-owned logs like /var/log/auth.log
     expose:
       # LAPI — reachable by Traefik and local tools, but not exposed to the public
       - "8080"
