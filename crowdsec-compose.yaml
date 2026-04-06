@@ -48,7 +48,7 @@ services:
     tmpfs:
       - /tmp
       - /run
-      - /var/log/traefik
+      - /var/log:mode=0755 # This creates a writable base for the log mount points
     cap_drop:
       - ALL
     expose:
