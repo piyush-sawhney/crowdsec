@@ -16,6 +16,7 @@ services:
         crowdsecurity/base-http-scenarios
         crowdsecurity/http-cve
         crowdsecurity/whitelist-good-actors
+        crowdsecurity/appsec-crs
       # Bouncer keys — set these in your .env file, never hardcode
       BOUNCER_KEY_traefik: "${CROWDSEC_TRAEFIK_KEY}"
       BOUNCER_KEY_firewall: "${CROWDSEC_FIREWALL_KEY}"
